@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <X11/cursorfont.h>
@@ -1215,9 +1216,7 @@ propertynotify(XEvent *e)
 	Window trans;
 	XPropertyEvent *ev = &e->xproperty;
 
-	if ((ev->window == root) && (ev->atom == XA_WM_NAME))
-		updatestatus();
-	else if (ev->state == PropertyDelete)
+	if (ev->state == PropertyDelete)
 		return; /* ignore */
 	else if ((c = wintoclient(ev->window))) {
 		switch(ev->atom) {
@@ -1373,11 +1372,19 @@ void
 run(void)
 {
 	XEvent ev;
+	time_t status_updated = time(NULL);
+
 	/* main event loop */
 	XSync(dpy, False);
-	while (running && !XNextEvent(dpy, &ev))
+	while (running && !XNextEvent(dpy, &ev)) {
 		if (handler[ev.type])
 			handler[ev.type](&ev); /* call handler */
+
+		if (time(NULL) - status_updated >= 60) {
+			status_updated = time(NULL);
+			updatestatus();
+		}
+	}
 }
 
 void
@@ -1987,8 +1994,9 @@ updatesizehints(Client *c)
 void
 updatestatus(void)
 {
-	if (!gettextprop(root, XA_WM_NAME, stext, sizeof(stext)))
-		strcpy(stext, "dwm-"VERSION);
+	time_t timer = time(NULL);
+
+	strftime(stext, sizeof(stext), "%Y-%m-%d %H:%M", localtime(&timer));
 	drawbar(selmon);
 }
 
