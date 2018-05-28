@@ -833,10 +833,13 @@ focusmon(const Arg *arg)
 
 	if (!mons->next)
 		return;
-	if (arg->i != 0 && (m = dirtomon(arg->i)) == selmon)
-		return;
-	if ((m = getmon(arg->ui)) == selmon)
-		return;
+	if (arg->i != 0) {
+		if ((m = dirtomon(arg->i)) == selmon)
+			return;
+	} else {
+		if ((m = getmon(arg->ui)) == selmon)
+			return;
+	}
 	if (m == NULL)
 		return;
 	unfocus(selmon->sel, 0);
