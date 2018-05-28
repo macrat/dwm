@@ -162,6 +162,7 @@ static void destroynotify(XEvent *e);
 static void detach(Client *c);
 static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
+static Monitor *getmon(int index);
 static void drawbar(Monitor *m);
 static void drawbars(void);
 static void enternotify(XEvent *e);
@@ -693,6 +694,17 @@ dirtomon(int dir)
 	return m;
 }
 
+Monitor *
+getmon(int index)
+{
+	unsigned int i;
+	Monitor *m;
+
+	for (i = 0, m = mons; m && i != index; i++, m = m->next);
+
+	return m;
+}
+
 void
 drawbar(Monitor *m)
 {
@@ -823,7 +835,11 @@ focusmon(const Arg *arg)
 
 	if (!mons->next)
 		return;
-	if ((m = dirtomon(arg->i)) == selmon)
+	if (arg->i != 0 && (m = dirtomon(arg->i)) == selmon)
+		return;
+	if ((m = getmon(arg->ui)) == selmon)
+		return;
+	if (m == NULL)
 		return;
 	unfocus(selmon->sel, 0);
 	selmon = m;
@@ -1417,7 +1433,7 @@ scan(void)
 void
 sendmon(Client *c, Monitor *m)
 {
-	if (c->mon == m)
+	if (c->mon == m || m == NULL)
 		return;
 	unfocus(c, 1);
 	detach(c);
@@ -1674,7 +1690,10 @@ tagmon(const Arg *arg)
 {
 	if (!selmon->sel || !mons->next)
 		return;
-	sendmon(selmon->sel, dirtomon(arg->i));
+	if (arg->i != 0)
+		sendmon(selmon->sel, dirtomon(arg->i));
+	else
+		sendmon(selmon->sel, getmon(arg->ui));
 }
 
 void
