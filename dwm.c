@@ -170,6 +170,7 @@ static void expose(XEvent *e);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
+static void focusmonindex(const Arg *arg);
 static void focusstack(const Arg *arg);
 static int getrootptr(int *x, int *y);
 static long getstate(Window w);
@@ -210,6 +211,7 @@ static void sigchld(int unused);
 static void spawn(const Arg *arg);
 static void tag(const Arg *arg);
 static void tagmon(const Arg *arg);
+static void tagmonindex(const Arg *arg);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
@@ -833,10 +835,21 @@ focusmon(const Arg *arg)
 
 	if (!mons->next)
 		return;
-	if (arg->i != 0)
-		m = dirtomon(arg->i);
-	else
-		m = getmon(arg->ui);
+	if ((m = dirtomon(arg->i)) == selmon)
+		return;
+	unfocus(selmon->sel, 0);
+	selmon = m;
+	focus(NULL);
+}
+
+void
+focusmonindex(const Arg *arg)
+{
+	Monitor *m;
+
+	if (!mons->next)
+		return;
+	m = getmon(arg->ui);
 	if (m == selmon || m == NULL)
 		return;
 	unfocus(selmon->sel, 0);
@@ -1688,10 +1701,15 @@ tagmon(const Arg *arg)
 {
 	if (!selmon->sel || !mons->next)
 		return;
-	if (arg->i != 0)
-		sendmon(selmon->sel, dirtomon(arg->i));
-	else
-		sendmon(selmon->sel, getmon(arg->ui));
+	sendmon(selmon->sel, dirtomon(arg->i));
+}
+
+void
+tagmonindex(const Arg *arg)
+{
+	if (!selmon->sel || !mons->next)
+		return;
+	sendmon(selmon->sel, getmon(arg->ui));
 }
 
 void
