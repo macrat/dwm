@@ -700,7 +700,7 @@ getmon(int index)
 	unsigned int i;
 	Monitor *m;
 
-	for (i = 0, m = mons; m && i != index; i++, m = m->next);
+	for (i = 0, m = mons; i < index && m != NULL; i++, m = m->next);
 
 	return m;
 }
@@ -833,14 +833,11 @@ focusmon(const Arg *arg)
 
 	if (!mons->next)
 		return;
-	if (arg->i != 0) {
-		if ((m = dirtomon(arg->i)) == selmon)
-			return;
-	} else {
-		if ((m = getmon(arg->ui)) == selmon)
-			return;
-	}
-	if (m == NULL)
+	if (arg->i != 0)
+		m = dirtomon(arg->i);
+	else
+		m = getmon(arg->ui);
+	if (m == selmon || m == NULL)
 		return;
 	unfocus(selmon->sel, 0);
 	selmon = m;
