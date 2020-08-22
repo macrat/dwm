@@ -1780,7 +1780,7 @@ tile(Monitor *m)
  
 	/* print layout symbols */
 	snprintf(m->ltsymbol, sizeof m->ltsymbol, "%c%c%c",
-		(char[]){ '<', '^', '>', 'v' }[ga->dir],
+		(char[]){ '<', 'A', '>', 'V' }[ga->dir],
 		(char[]){ '-', '|' }[ma->dir],
 		(char[]){ '-', '|' }[sa->dir]);
 
