@@ -117,7 +117,7 @@ static Key keys[] = {
 	MONKEYS(                        XK_7,                      6)
 	MONKEYS(                        XK_8,                      7)
 	MONKEYS(                        XK_9,                      8)
-	{ MODKEY|ControlMask,           XK_l,      spawn,          {.v = lockcmd } },
+	{ MODKEY|ControlMask,           XK_q,      spawn,          {.v = lockcmd } },
 	{ MODKEY|ShiftMask,             XK_s,      spawn,          {.v = screenshotcmd } },
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
