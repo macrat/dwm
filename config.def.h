@@ -36,6 +36,7 @@ static const int dirs[3]      = { DirHor, DirVer, DirVer }; /* tiling dirs */
 static const float facts[3]   = { 1.1,    1.1,    1.1 };    /* tiling facts */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
+static const int lockfullscreen = 0; /* 1 will force focus on the fullscreen window */
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
